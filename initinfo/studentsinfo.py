@@ -33,18 +33,7 @@ def gen_gpa():
     result = result[np.newaxis,:].T
     return result
 
-#nparray : studentno gpa
-def merge():
-    studentarray = gen_student(2130000)
-    gpaarray = gen_gpa()
-    #拼接
-    res_array = np.concatenate((studentarray,gpaarray),axis=1)
-    #设置显示的样式
-    #np.set_printoptions(precision=3,suppress=True)
-    res_df = pd.DataFrame(res_array, columns=['studentno', 'gpa'])
-    res_df['studentno'] = res_df['studentno'].astype('int')
-    print(res_df.dtypes)
-    return res_df
+
 
 #计算得到一个分段线性函数 
 def getcount(x):
@@ -79,30 +68,55 @@ def gen_stuattendlist(count):
             count-=1
         else :
             list.append(0)
-    list = np.array(random.sample(list,20))
-    print(list[np.newaxis,:])
-    return list[np.newaxis,:]
+    '''list = np.array(random.sample(list,20))
+    print(list[np.newaxis,:])'''
+    #return list[np.newaxis,:]
+    return list 
 
 #生成所有学生的到勤情况 然后拼接？
 def gen_allstuattendlist(attendlist):
     res = []
-    for gpa in gpalist:
-        attinfo = gen_stuattendlist(gpa)
-        res = np.concatenate((res,attinfo),axis=1)
-        print(res.shape)
-#测试
-np.set_printoptions(precision=3,suppress=True)
-#test = np.arange(1,4,0.1)
-test = gen_gpa()
-attendlist = getattendcount(test)     
-print(gen_stuattendlist(16))
-gen_allstuattendlist(test)
+    for attendsumconut in attendlist:
+        temp = gen_stuattendlist(attendsumconut)
+        temp.append(attendsumconut)
+        res.append(temp)
+    return res
 
-#然后列表和gpa拼接转换为dataframe 并和第一个表拼接的到单个班的到勤情况
-#可以生成10个班的到勤情况 前五个班作为训练集 后五个班作为测试集计算出最后的e
-df = merge()
-#print(df.sort_values(by="gpa" , ascending=True)['studentno'][:8] )
+#输入班级号生成数据
+def gen_data(lessonno):
+    np.set_printoptions(precision=3,suppress=True)
+    #生成学号
+    studentarray = gen_student(lessonno)
+    #生成gpa 列向量
+    gpaarray = gen_gpa()
+    #根据gpa生成每个学生到勤总次数
+    attendlist = getattendcount(gpaarray)
+    #根据每个学生学期到勤总次数生成这个学期的到勤情况
+    #nparray : 1-20 sumcount
+    attendchart = np.array(gen_allstuattendlist(attendlist))
+    #拼接
+    res_array = np.concatenate((studentarray,gpaarray),axis=1)
+    res_array = np.concatenate((res_array,attendchart),axis=1)
+    print(res_array.dtype)
+    #设置显示的样式
+    #np.set_printoptions(precision=3,suppress=True)
+    col_names = ['studentno','gpa','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','count']
+    res_df = pd.DataFrame(res_array, columns=col_names)
+    res_df = res_df.infer_objects()
+    res_df['studentno'] = res_df['studentno'].astype('int')
+    res_df['count'] = res_df['count'].astype('int')
+    list = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20']
+    for lesson in list:
+        res_df[lesson] = res_df[lesson].astype('int')
+    res_df = res_df.round({'gpa': 2})
+    return res_df
 
-data = df.sort_values(by="gpa" , ascending=True)['studentno'].values
-data = data[np.newaxis,:].T
-#print(data)
+if __name__ == '__main__':
+    #np.set_printoptions(precision=3,suppress=True)
+    for i in range(1,6):
+        lessonno = 2130000
+        substr = 'lessondata'
+        filename = '.csv'
+        df = gen_data(lessonno + i*100)
+        df.to_csv(str(substr + str(i)  + filename), sep = ',',index = False)
+        #print(df.sort_values(by="gpa" , ascending=True)['studentno'][:8] )
