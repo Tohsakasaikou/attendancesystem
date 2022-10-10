@@ -115,7 +115,7 @@ if __name__ == '__main__':
     #np.set_printoptions(precision=3,suppress=True)
     for i in range(1,6):
         lessonno = 2130000
-        substr = 'lessondata'
+        substr = 'data\\lessondata'
         filename = '.csv'
         df = gen_data(lessonno + i*100)
         df.to_csv(str(substr + str(i)  + filename), sep = ',',index = False)
