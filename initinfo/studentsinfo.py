@@ -71,7 +71,7 @@ def gen_stuattendlist(count):
     '''list = np.array(random.sample(list,20))
     print(list[np.newaxis,:])'''
     #return list[np.newaxis,:]
-    return list 
+    return random.sample(list,20)
 
 #生成所有学生的到勤情况 然后拼接？
 def gen_allstuattendlist(attendlist):
