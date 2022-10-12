@@ -38,11 +38,11 @@ def gen_gpa():
 #计算得到一个分段线性函数 
 def getcount(x):
     x1,y1,y2,x3,y3 = 0.8 , 18 , 14 , 4 , 0
-    x2 = (np.random.randint(14,17))/10
+    x2 = (np.random.randint(16,17))/10
     #print(x2)
     k1 = (y1-y2)/(x1-x2)
     b1 = y1-k1*x1
-    k2 = (2.5-y3)/(x2-x3)
+    k2 = (3-y3)/(x2-x3)
     b2 = -(k2*x3)
     return np.piecewise(x, [x < x2 , x >= x2 ], [lambda x: k1*x+b1, lambda x: k2*x+b2])
 
@@ -73,7 +73,7 @@ def gen_stuattendlist(count):
     #return list[np.newaxis,:]
     return random.sample(list,20)
 
-#生成所有学生的到勤情况 然后拼接？
+#生成所有学生的到勤情况 然后拼接
 def gen_allstuattendlist(attendlist):
     res = []
     for attendsumconut in attendlist:
